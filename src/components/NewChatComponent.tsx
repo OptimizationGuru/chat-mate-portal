@@ -2,8 +2,18 @@ import { Bot, Menu, Mic } from 'lucide-react';
 import { ChatMessage } from './ChatMessage';
 import RoleSelection from './RoleSelection';
 import { Sidebar } from './Sidebar';
-import { YumaLogo } from '@/assets';
 import { InputArea } from './InputArea';
+import { Chat, ChatState, Role } from '../types';
+import { YumaLogo } from '@/assets';
+
+interface ChatContainerProps {
+  state: ChatState;
+  messagesEndRef: React.RefObject<HTMLDivElement>;
+  userRole: string | null;
+  showSelectoptions: boolean;
+  roles: Role[];
+  handleRoleSelection: (role: string) => void;
+}
 
 const ChatContainer = ({
   state,
@@ -12,13 +22,15 @@ const ChatContainer = ({
   showSelectoptions,
   roles,
   handleRoleSelection,
-}) => {
+}: ChatContainerProps) => {
   return (
     <div className="flex-1 overflow-y-auto">
       <div className="max-w-5xl mx-auto py-8 px-4 my-1 rounded-lg">
-        {/* Chat messages */}
         {state.messages.map((message) => (
-          <ChatMessage key={message.id} message={message} />
+          <ChatMessage
+            key={message.id + Math.floor(Math.random() * 5000)}
+            message={message}
+          />
         ))}
 
         {state.isProcessing && (
@@ -50,8 +62,28 @@ const ChatContainer = ({
   );
 };
 
+interface ChatLayoutProps {
+  chats: Chat[];
+  selectedChat: number;
+  activeChat: string;
+  handleNewChat: () => void;
+  handleSelectChat: (id: string) => void;
+  handleDeleteChat: (id: string) => void;
+  isSidebarOpen: boolean;
+  setIsSidebarOpen: (value: boolean) => void;
+  state: ChatState[];
+  messagesEndRef: React.RefObject<HTMLDivElement>;
+  userRole: string | null;
+  showSelectoptions: boolean;
+  roles: Role[];
+  handleRoleSelection: (role: string) => void;
+  handleSendMessage: (content: string, image?: string) => void;
+  toggleListening: () => void;
+}
+
 const ChatLayout = ({
   chats,
+  selectedChat,
   activeChat,
   handleNewChat,
   handleSelectChat,
@@ -66,7 +98,7 @@ const ChatLayout = ({
   handleRoleSelection,
   handleSendMessage,
   toggleListening,
-}) => {
+}: ChatLayoutProps) => {
   return (
     <div className="flex h-screen bg-gray-100">
       <Sidebar
@@ -76,18 +108,17 @@ const ChatLayout = ({
         onSelectChat={handleSelectChat}
         onDeleteChat={handleDeleteChat}
         isCollapsed={!isSidebarOpen}
-        onToggle={() => setIsSidebarOpen((prev) => !prev)}
+        onToggle={() => setIsSidebarOpen(!isSidebarOpen)}
       />
 
       <div className="flex-1 flex flex-col min-w-0">
         <header className="bg-white border-b p-4 flex items-center gap-4">
           <button
-            onClick={() => setIsSidebarOpen((prev) => !prev)}
+            onClick={() => setIsSidebarOpen(!isSidebarOpen)}
             className="lg:hidden p-2 hover:bg-gray-100 rounded-lg transition-colors"
           >
             <Menu className="w-8 h-8" />
           </button>
-
           <img
             className="w-40 h-16 rounded-lg"
             src={YumaLogo}
@@ -99,7 +130,7 @@ const ChatLayout = ({
             <h1 className="text-xl font-semibold text-blue-700">
               GenAI at your Service
             </h1>
-            {state.isListening && (
+            {state[selectedChat]?.isListening && (
               <div className="flex items-center gap-2 ml-4 px-3 py-1 bg-red-50 text-blue-600 rounded-full animate-pulse">
                 <Mic className="w-4 h-4" />
                 <span className="text-sm font-medium">
@@ -111,7 +142,7 @@ const ChatLayout = ({
         </header>
 
         <ChatContainer
-          state={state}
+          state={state[selectedChat]}
           messagesEndRef={messagesEndRef}
           userRole={userRole}
           showSelectoptions={showSelectoptions}
@@ -122,9 +153,9 @@ const ChatLayout = ({
         {userRole && (
           <InputArea
             onSendMessage={handleSendMessage}
-            isListening={state.isListening}
+            isListening={state[selectedChat]?.isListening}
             onToggleListening={toggleListening}
-            isProcessing={state.isProcessing}
+            isProcessing={state[selectedChat]?.isProcessing}
           />
         )}
       </div>

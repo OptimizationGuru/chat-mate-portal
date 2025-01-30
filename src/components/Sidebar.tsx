@@ -38,7 +38,7 @@ export function Sidebar({
         )}
       >
         <div className="flex items-center justify-between p-4">
-          <h2 className="text-lg font-semibold text-gray-900">Chats</h2>
+          <h2 className="text-lg font-semibold text-blue-700">Chats</h2>
           <button
             onClick={onNewChat}
             className="p-2  bg-blue-500 rounded-full text-white hover:bg-blue-600 transition-colors"

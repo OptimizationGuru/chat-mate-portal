@@ -31,7 +31,7 @@ export function ChatMessage({ message }: ChatMessageProps) {
             <img
               src={message.image}
               alt="User uploaded"
-              className="max-w-sm rounded-lg mb-2"
+              className="w-1/2 rounded-lg mb-2"
             />
           )}
           <p className="text-gray-800 whitespace-pre-wrap">{message.content}</p>

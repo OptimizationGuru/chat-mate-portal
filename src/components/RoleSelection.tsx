@@ -1,10 +1,5 @@
+import { Role } from '@/types';
 import React from 'react';
-
-interface Role {
-  id: number;
-  role: string;
-  value: string;
-}
 
 interface RoleSelectionProps {
   roles: Role[];
