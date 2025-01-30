@@ -21,21 +21,21 @@ export function ChatTab({ id, isActive, title, onSelect, onDelete }: ChatTabProp
       onClick={onSelect}
       className={cn(
         "group flex items-center justify-between px-4 py-3 cursor-pointer transition-all duration-200",
-        "hover:bg-sidebar-accent rounded-lg mx-2",
-        isActive && "bg-sidebar-accent"
+        "hover:bg-gray-100 rounded-lg mx-2",
+        isActive && "bg-gray-100"
       )}
     >
       <div className="flex items-center gap-3">
         <MessageSquare
           className={cn(
             "w-5 h-5 transition-colors duration-200",
-            isActive ? "text-sidebar-primary" : "text-sidebar-foreground"
+            isActive ? "text-blue-500" : "text-gray-500"
           )}
         />
         <span
           className={cn(
             "text-sm font-medium transition-colors duration-200",
-            isActive ? "text-sidebar-primary" : "text-sidebar-foreground"
+            isActive ? "text-gray-900" : "text-gray-700"
           )}
         >
           {title}
@@ -48,10 +48,10 @@ export function ChatTab({ id, isActive, title, onSelect, onDelete }: ChatTabProp
             onClick={(e) => e.stopPropagation()}
             className={cn(
               "p-1 rounded-md transition-colors duration-200 opacity-0 group-hover:opacity-100",
-              "hover:bg-sidebar-accent/50"
+              "hover:bg-gray-200"
             )}
           >
-            <MoreVertical className="w-4 h-4 text-sidebar-foreground" />
+            <MoreVertical className="w-4 h-4 text-gray-500" />
           </button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">

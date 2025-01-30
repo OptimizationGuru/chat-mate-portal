@@ -13,3 +13,9 @@ export interface ChatState {
   isSpeaking: boolean;
   interimTranscript: string;
 }
+
+export interface Chat {
+  id: string;
+  title: string;
+  messages: Message[];
+}

@@ -2,15 +2,9 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import { ChatMessage } from './components/ChatMessage';
 import { InputArea } from './components/InputArea';
 import { Sidebar } from './components/Sidebar';
-import { Message, ChatState } from './types';
+import { Message, ChatState, Chat } from './types';
 import { Bot, Mic, Menu } from 'lucide-react';
 import { YumaLogo } from './assets';
-
-interface Chat {
-  id: string;
-  title: string;
-  messages: Message[];
-}
 
 function App() {
   const [chats, setChats] = useState<Chat[]>([

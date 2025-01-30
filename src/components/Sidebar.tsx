@@ -32,16 +32,16 @@ export function Sidebar({
       />
       <aside
         className={cn(
-          "fixed lg:relative inset-y-0 left-0 z-50 flex flex-col w-72 bg-sidebar transition-transform duration-300 ease-in-out",
-          "border-r border-sidebar-border",
+          "fixed lg:relative inset-y-0 left-0 z-50 flex flex-col w-72 bg-white transition-transform duration-300 ease-in-out",
+          "border-r border-gray-200",
           isCollapsed && "-translate-x-full lg:translate-x-0"
         )}
       >
         <div className="flex items-center justify-between p-4">
-          <h2 className="text-lg font-semibold text-sidebar-foreground">Chats</h2>
+          <h2 className="text-lg font-semibold text-gray-900">Chats</h2>
           <button
             onClick={onNewChat}
-            className="p-2 rounded-lg bg-sidebar-primary text-sidebar-primary-foreground hover:opacity-90 transition-opacity"
+            className="p-2 rounded-lg bg-blue-500 text-white hover:bg-blue-600 transition-colors"
           >
             <Plus className="w-5 h-5" />
           </button>
