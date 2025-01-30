@@ -1,17 +1,17 @@
-import React, { useState, useEffect } from "react";
-import { MessageSquare, MoreVertical, Trash2 } from "lucide-react";
-import { cn } from "@/lib/utils";
+import React, { useState, useEffect } from 'react';
+import { MessageSquare, MoreVertical, Trash2 } from 'lucide-react';
+import { cn } from '@/lib/utils';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+} from '@/components/ui/dropdown-menu';
 
 interface Role {
   id: number;
   role: string;
-  value:string
+  value: string;
 }
 
 interface ChatTabProps {
@@ -22,47 +22,33 @@ interface ChatTabProps {
   onDelete: () => void;
 }
 
-export function ChatTab({ id, isActive, title, onSelect, onDelete }: ChatTabProps) {
-  // State for selected role
-  const [selectedRole, setSelectedRole] = useState<Role | null>(null);
-
-  // Predefined roles
-  const roles: Role[] = [
-    { id: 1, role: "YMax Commander", value: "commander" },
-    { id: 2, role: "Technology", value:"technical_developer"  },
-    { id: 3, role: "Cluster Manager", value:"cluster_manager"  },
-  ];
-
-  // Initialize selected role when the component loads
-  useEffect(() => {
-    // For example, setting the first role as the default on load
-    setSelectedRole(roles[0]);
-  }, []);
-
-  const handleRoleChange = (role: Role) => {
-    setSelectedRole(role);
-  };
-
+export function ChatTab({
+  id,
+  isActive,
+  title,
+  onSelect,
+  onDelete,
+}: ChatTabProps) {
   return (
     <div
       onClick={onSelect}
       className={cn(
-        "group flex items-center justify-between px-4 py-3 cursor-pointer transition-all duration-200",
-        "hover:bg-gray-100 rounded-lg mx-2",
-        isActive && "bg-gray-100"
+        'group flex items-center justify-between px-4 py-3 cursor-pointer transition-all duration-200',
+        'hover:bg-gray-100 rounded-lg mx-2',
+        isActive && 'bg-gray-100'
       )}
     >
       <div className="flex items-center gap-3">
         <MessageSquare
           className={cn(
-            "w-5 h-5 transition-colors duration-200",
-            isActive ? "text-blue-500" : "text-gray-500"
+            'w-5 h-5 transition-colors duration-200',
+            isActive ? 'text-blue-500' : 'text-gray-500'
           )}
         />
         <span
           className={cn(
-            "text-sm font-medium transition-colors duration-200",
-            isActive ? "text-gray-900" : "text-gray-700"
+            'text-sm font-medium transition-colors duration-200',
+            isActive ? 'text-gray-900' : 'text-gray-700'
           )}
         >
           {title}
@@ -74,8 +60,8 @@ export function ChatTab({ id, isActive, title, onSelect, onDelete }: ChatTabProp
           <button
             onClick={(e) => e.stopPropagation()}
             className={cn(
-              "p-1 rounded-md transition-colors duration-200 opacity-0 group-hover:opacity-100",
-              "hover:bg-gray-200"
+              'p-1 rounded-md transition-colors duration-200 opacity-0 group-hover:opacity-100',
+              'hover:bg-gray-200'
             )}
           >
             <MoreVertical className="w-4 h-4 text-gray-500" />

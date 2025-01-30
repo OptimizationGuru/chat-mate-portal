@@ -80,7 +80,7 @@ export function InputArea({
             onKeyPress={handleKeyPress}
             placeholder="Type a message or speak..."
             rows={1}
-            className="w-full resize-none rounded-lg border border-gray-200 p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full resize-none rounded-xl border border-gray-200 p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>
         

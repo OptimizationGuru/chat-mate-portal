@@ -15,20 +15,22 @@ const RoleSelection: React.FC<RoleSelectionProps> = ({
   roles,
   onSelectRole,
 }) => (
-  <div className="flex flex-col items-center gap-6 bg-white p-6 rounded-lg shadow-xs w-1/2 mt-4">
-    <h2 className="text-2xl font-semibold text-gray-800">Select Your Role</h2>
-    <div className="flex flex-col gap-4 w-full">
+  <div className="bg-gray-50 shadow-md rounded-2xl p-6 w-full max-w-md mx-auto">
+    <h2 className="text-xl font-semibold text-blue-700 text-center mb-4">
+      Select Your Role
+    </h2>
+    <div className="flex flex-col gap-3">
       {roles.map((role) => (
         <label
           key={role.id}
-          className="flex items-center gap-3 p-3 rounded-lg hover:bg-blue-50 transition duration-200 ease-in-out cursor-pointer"
+          className="flex items-center gap-3 p-3 border rounded-xl cursor-pointer transition-all hover:bg-blue-50 hover:border-blue-500"
         >
           <input
             type="radio"
             name="role"
             value={role.value}
             onChange={() => onSelectRole(role.value)}
-            className="w-5 h-5 text-blue-600 focus:ring-blue-500"
+            className="w-4 h-4 text-blue-600 focus:ring-2 focus:ring-blue-500 accent-blue-500"
           />
           <span className="text-lg text-gray-700 font-medium">{role.role}</span>
         </label>

@@ -21,9 +21,8 @@ export interface Chat {
 }
 
 export interface PostBody {
-  chatId: string;
   role: string;
-  textContent?: string;
-  imgTextContent?: string;
-  voiceTextContent?: string;
+  user_text: string;
+  image_text: string;
+  chat_id: string;
 }
