@@ -4,7 +4,7 @@ import { InputArea } from './components/InputArea';
 import { Sidebar } from './components/Sidebar';
 import { Message, ChatState } from './types';
 import { Bot, Mic, Menu } from 'lucide-react';
-import { YumaLogo } from '../assets';
+import { YumaLogo } from './assets';
 
 interface Chat {
   id: string;
