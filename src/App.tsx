@@ -29,7 +29,7 @@ function App() {
   const recognition = useRef<SpeechRecognition | null>(null);
   const synthesis = useRef(window.speechSynthesis);
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const silenceTimer = useRef<number | null>(null);
+  const silenceTimer = useRef<NodeJS.Timeout | null>(null);
   const lastSpeechTime = useRef<number>(Date.now());
 
   useEffect(() => {
