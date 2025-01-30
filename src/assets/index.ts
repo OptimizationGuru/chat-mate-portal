@@ -1,1 +1,4 @@
-export const YumaLogo = '/placeholder.svg'; // Using the placeholder image from public folder
+import YumaLogo from "./YumaLogo.png";
+
+
+export { YumaLogo };
