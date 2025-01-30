@@ -1,3 +1,4 @@
+import React, { useState, useEffect } from "react";
 import { MessageSquare, MoreVertical, Trash2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
@@ -6,6 +7,12 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+
+interface Role {
+  id: number;
+  role: string;
+  value:string
+}
 
 interface ChatTabProps {
   id: string;
@@ -16,6 +23,26 @@ interface ChatTabProps {
 }
 
 export function ChatTab({ id, isActive, title, onSelect, onDelete }: ChatTabProps) {
+  // State for selected role
+  const [selectedRole, setSelectedRole] = useState<Role | null>(null);
+
+  // Predefined roles
+  const roles: Role[] = [
+    { id: 1, role: "YMax Commander", value: "commander" },
+    { id: 2, role: "Technology", value:"technical_developer"  },
+    { id: 3, role: "Cluster Manager", value:"cluster_manager"  },
+  ];
+
+  // Initialize selected role when the component loads
+  useEffect(() => {
+    // For example, setting the first role as the default on load
+    setSelectedRole(roles[0]);
+  }, []);
+
+  const handleRoleChange = (role: Role) => {
+    setSelectedRole(role);
+  };
+
   return (
     <div
       onClick={onSelect}
@@ -41,7 +68,7 @@ export function ChatTab({ id, isActive, title, onSelect, onDelete }: ChatTabProp
           {title}
         </span>
       </div>
-      
+
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <button

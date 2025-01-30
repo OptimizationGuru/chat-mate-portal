@@ -19,3 +19,11 @@ export interface Chat {
   title: string;
   messages: Message[];
 }
+
+export interface PostBody {
+  chatId: string;
+  role: string;
+  textContent?: string;
+  imgTextContent?: string;
+  voiceTextContent?: string;
+}

@@ -5,13 +5,24 @@ import { Sidebar } from './components/Sidebar';
 import { Message, ChatState, Chat } from './types';
 import { Bot, Mic, Menu } from 'lucide-react';
 import { YumaLogo } from './assets';
+import RoleSelection from './components/RoleSelection';
+import {
+  greetMessage,
+  requestRoleSelection,
+  roles,
+  roleSelectionMessage,
+  startConvoMessage,
+} from './lib/constants';
 
 function App() {
+  const firstChatId = String(Date.now().toString());
   const [chats, setChats] = useState<Chat[]>([
-    { id: '1', title: 'New Chat', messages: [] },
+    { id: firstChatId, title: 'New Chat', messages: [] },
   ]);
-  const [activeChat, setActiveChat] = useState('1');
+  const [activeChat, setActiveChat] = useState(firstChatId);
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [userRole, setUserRole] = useState<string | null>(null);
+  const [showSelectoptions, setShowSelectoptions] = useState(false);
   const [state, setState] = useState<ChatState>({
     messages: [],
     isListening: false,
@@ -28,7 +39,8 @@ function App() {
 
   useEffect(() => {
     if ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window) {
-      recognition.current = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+      recognition.current = new (window.SpeechRecognition ||
+        window.webkitSpeechRecognition)();
 
       // Enhanced recognition settings
       recognition.current.continuous = true; // Set to true for continuous listening
@@ -39,7 +51,11 @@ function App() {
       let finalTranscriptBuffer = '';
 
       recognition.current.onstart = () => {
-        setState((prev) => ({ ...prev, isListening: true, interimTranscript: '' }));
+        setState((prev) => ({
+          ...prev,
+          isListening: true,
+          interimTranscript: '',
+        }));
         finalTranscriptBuffer = '';
         lastSpeechTime.current = Date.now();
       };
@@ -49,7 +65,11 @@ function App() {
         if (state.isListening) {
           recognition.current?.start();
         } else {
-          setState((prev) => ({ ...prev, isListening: false, interimTranscript: '' }));
+          setState((prev) => ({
+            ...prev,
+            isListening: false,
+            interimTranscript: '',
+          }));
         }
       };
 
@@ -121,15 +141,16 @@ function App() {
         clearTimeout(silenceTimer.current);
       }
     };
-  }, [state.isListening]); // Added state.isListening as dependency
+  }, [state.isListening]);
 
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  const handleRoleSelection = async (role: string) => {
+    setUserRole(role); // Update the selected role
+    setShowSelectoptions(false);
+    const newMsg = `${roleSelectionMessage} ${role
+      .toUpperCase()
+      .replace('_', ' ')}${startConvoMessage}`;
+    await sendBotMessage(newMsg);
   };
-
-  useEffect(() => {
-    scrollToBottom();
-  }, [state.messages]);
 
   const handleSendMessage = async (content: string, image?: string) => {
     if (!content && !image) return;
@@ -143,7 +164,7 @@ function App() {
     };
 
     const updatedMessages = [...state.messages, userMessage];
-    
+
     setState((prev) => ({
       ...prev,
       messages: updatedMessages,
@@ -154,17 +175,18 @@ function App() {
     setChats((prev) =>
       prev.map((chat) =>
         chat.id === activeChat
-          ? { ...chat, messages: updatedMessages, title: content.slice(0, 20) + '...' }
+          ? {
+              ...chat,
+              messages: updatedMessages,
+              title: content.slice(0, 20) + '...',
+            }
           : chat
       )
     );
 
     try {
       const response = await new Promise<string>((resolve) =>
-        setTimeout(
-          () => resolve("I'm a bot response. I've received your message and/or image."),
-          1000
-        )
+        setTimeout(() => resolve(greetMessage), 1000)
       );
 
       const botMessage: Message = {
@@ -184,9 +206,7 @@ function App() {
 
       setChats((prev) =>
         prev.map((chat) =>
-          chat.id === activeChat
-            ? { ...chat, messages: finalMessages }
-            : chat
+          chat.id === activeChat ? { ...chat, messages: finalMessages } : chat
         )
       );
 
@@ -225,6 +245,8 @@ function App() {
     setChats((prev) => [...prev, newChat]);
     setActiveChat(newChat.id);
     setState((prev) => ({ ...prev, messages: [] }));
+    setUserRole(null);
+    sendBotMessage(greetMessage);
   };
 
   const handleDeleteChat = (id: string) => {
@@ -248,6 +270,53 @@ function App() {
     }
   };
 
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [state.messages]);
+
+  const sendBotMessage = async (botMsg: string) => {
+    try {
+      const botMessage: Message = {
+        id: (Date.now() + 1).toString(),
+        content: botMsg,
+        type: 'bot',
+        timestamp: new Date(),
+      };
+
+      const finalMessages = [...state.messages, botMessage];
+
+      setState((prev) => ({
+        ...prev,
+        messages: finalMessages,
+        isProcessing: false,
+      }));
+
+      setChats((prev) =>
+        prev.map((chat) =>
+          chat.id === activeChat ? { ...chat, messages: finalMessages } : chat
+        )
+      );
+
+      const utterance = new SpeechSynthesisUtterance(botMsg);
+      utterance.lang = 'en-US';
+      utterance.rate = 1.0;
+      utterance.pitch = 1.0;
+      synthesis.current.speak(utterance);
+      if (!userRole) setShowSelectoptions(true);
+    } catch (error) {
+      console.error('Error processing message:', error);
+      setState((prev) => ({ ...prev, isProcessing: false }));
+    }
+  };
+
+  useEffect(() => {
+    sendBotMessage(greetMessage);
+  }, []);
+
   return (
     <div className="flex h-screen bg-gray-100">
       <Sidebar
@@ -259,7 +328,7 @@ function App() {
         isCollapsed={!isSidebarOpen}
         onToggle={() => setIsSidebarOpen((prev) => !prev)}
       />
-      
+
       <div className="flex-1 flex flex-col min-w-0">
         <header className="bg-white border-b p-4 flex items-center gap-4">
           <button
@@ -268,16 +337,24 @@ function App() {
           >
             <Menu className="w-5 h-5" />
           </button>
-          
-          <img className="w-40 h-16 rounded-lg" src={YumaLogo} alt="Yuma Logo" />
-          
+
+          <img
+            className="w-40 h-16 rounded-lg"
+            src={YumaLogo}
+            alt="Yuma Logo"
+          />
+
           <div className="flex items-center gap-2 ml-auto">
             <Bot className="w-8 h-8 text-blue-500" />
-            <h1 className="text-xl font-semibold text-blue-700">GenAI at your Service</h1>
+            <h1 className="text-xl font-semibold text-blue-700">
+              GenAI at your Service
+            </h1>
             {state.isListening && (
               <div className="flex items-center gap-2 ml-4 px-3 py-1 bg-red-50 text-red-600 rounded-full animate-pulse">
                 <Mic className="w-4 h-4" />
-                <span className="text-sm font-medium">Mindfully Listening...</span>
+                <span className="text-sm font-medium">
+                  Mindfully Listening...
+                </span>
               </div>
             )}
           </div>
@@ -285,9 +362,11 @@ function App() {
 
         <div className="flex-1 overflow-y-auto">
           <div className="max-w-4xl mx-auto py-8 px-4">
+            {/* Chat messages */}
             {state.messages.map((message) => (
               <ChatMessage key={message.id} message={message} />
             ))}
+
             {state.isProcessing && (
               <div className="flex gap-2 p-4 text-gray-500">
                 <div className="animate-bounce">●</div>
@@ -295,26 +374,35 @@ function App() {
                 <div className="animate-bounce delay-200">●</div>
               </div>
             )}
+
             {state.interimTranscript && (
               <div className="flex gap-4 p-4 bg-blue-50">
                 <div className="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center animate-pulse">
                   <Mic className="w-5 h-5 text-white" />
                 </div>
                 <div className="flex-1">
-                  <p className="text-gray-600 italic">{state.interimTranscript}</p>
+                  <p className="text-gray-600 italic">
+                    {state.interimTranscript}
+                  </p>
                 </div>
               </div>
+            )}
+            {!userRole && showSelectoptions && (
+              <RoleSelection roles={roles} onSelectRole={handleRoleSelection} />
             )}
             <div ref={messagesEndRef} />
           </div>
         </div>
 
-        <InputArea
-          onSendMessage={handleSendMessage}
-          isListening={state.isListening}
-          onToggleListening={toggleListening}
-          isProcessing={state.isProcessing}
-        />
+        {/* InputArea for typing after the role is selected */}
+        {userRole && (
+          <InputArea
+            onSendMessage={handleSendMessage}
+            isListening={state.isListening}
+            onToggleListening={toggleListening}
+            isProcessing={state.isProcessing}
+          />
+        )}
       </div>
     </div>
   );

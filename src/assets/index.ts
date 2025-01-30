@@ -1,4 +1,4 @@
-import YumaLogo from "./YumaLogo.png";
+import YumaLogo from './YumaBannerLogo.png';
+import YumaBot from './YumaBot.png';
 
-
-export { YumaLogo };
+export { YumaLogo, YumaBot };
